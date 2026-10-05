@@ -50,14 +50,14 @@ jobs:
             rust_target: x86_64-pc-windows-msvc
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
 
       # Hermes adapter behavioral tests execute Python on every test platform.
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@e797f83bcb11b83ae66e0230d6156d7c80228e7c # v6.0.0
         with:
           python-version: '3.12'
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
         with:
           node-version: 22
           cache: npm
@@ -66,7 +66,7 @@ jobs:
         with:
           targets: ${{ matrix.rust_target }}
 
-      - uses: Swatinem/rust-cache@v2
+      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2.9.2
         with:
           workspaces: src-tauri
 
@@ -330,7 +330,7 @@ jobs:
           node scripts/release-assets.mjs dist argo "$(node -p 'require("./package.json").version')" "${{ matrix.rust_target }}"
           ls -la dist
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: argo-${{ matrix.rust_target }}
           path: dist/*
@@ -345,8 +345,8 @@ jobs:
   server:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
         with:
           node-version: 22
           cache: npm
@@ -364,7 +364,7 @@ jobs:
       # 다시 올린다(앱 발행 불필요 — 전 기기 20분 TTL 안에 반영). 발행 드릴의 `*/*` 글롭이 함께 올린다.
       - name: Generate model catalog overlay
         run: node scripts/gen-model-catalog.mjs dist-server/model-catalog.json
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: argo-server-linux-x64
           path: |
@@ -380,8 +380,8 @@ jobs:
     if: success() && startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           path: dist
           merge-multiple: true
@@ -398,7 +398,7 @@ jobs:
       # ※ argo 소스 레포는 public이다(2026-07-23 전환, 2026-09-07 하루 private 뒤 복귀 — 프라이빗 플랜 릴리스 한도).
       #   "private라 유출 없음" 옛 전제는 폐기 상태 그대로. argo-agent도 public(다운로드·업데이터).
       # cross-repo라 RELEASE_TOKEN(argo-agent contents:write PAT) 필요. draft=true라 검토 후 사람이 게시.
-      - uses: softprops/action-gh-release@v2
+      - uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64 # v3.0.3
         with:
           repository: beyondworks/argo-agent
           token: ${{ secrets.RELEASE_TOKEN }}
